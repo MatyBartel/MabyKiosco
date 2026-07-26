@@ -69,7 +69,7 @@
       <div #pieChart class="echart pie-echart"></div>
       <div class="leyenda">
         <div class="item" *ngFor="let p of pagosUso; index as i">
-          <span class="c" [style.background]="['#4A9AAD','#27ae60','#C5A059','#8e44ad','#e67e22','#e74c3c'][i % 6]"></span>
+          <span class="c" [style.background]="['#FF9933','#27ae60','#E07A28','#8e44ad','#e67e22','#e74c3c'][i % 6]"></span>
           <span class="m">{{ p.metodo }}</span>
           <span class="pct">{{ p.percent }}%</span>
         </div>

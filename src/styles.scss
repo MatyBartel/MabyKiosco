@@ -1,20 +1,20 @@
 :root {
-  --brand-primary: #6BBDD0;
-  --brand-primary-dark: #3D8FA3;
-  --brand-bg: #4A8798;
-  --brand-bg-gradient: linear-gradient(160deg, #3A7285 0%, #4A8798 48%, #5BA3B5 100%);
-  --brand-gold: #D4B06A;
-  --brand-cream: #C5DDE6;
-  --brand-text: #2A3F48;
+  --brand-primary: #FF9933;
+  --brand-primary-dark: #E07A28;
+  --brand-bg: #FFAA55;
+  --brand-bg-gradient: linear-gradient(160deg, #E88838 0%, #FFAA55 48%, #FFBF80 100%);
+  --brand-gold: #FFD699;
+  --brand-cream: #FFF0E0;
+  --brand-text: #4A3528;
   --brand-white: #FFFFFF;
 
   --surface: rgba(255, 255, 255, 0.96);
   --surface-solid: #FFFFFF;
-  --surface-muted: #F5F8FA;
-  --surface-border: #DCE6ED;
-  --surface-shadow: 0 12px 32px rgba(20, 50, 60, 0.15);
+  --surface-muted: #FFF8F2;
+  --surface-border: #F0D4B8;
+  --surface-shadow: 0 12px 32px rgba(120, 70, 30, 0.12);
   --heading-color: #FFFFFF;
-  --text-muted: #C8E2EC;
+  --text-muted: #FFE8CC;
 }
 
 html,

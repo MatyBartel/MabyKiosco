@@ -7,6 +7,7 @@ import { BarcodeScannerService } from '../../services/barcode-scanner.service';
 import { Subscription } from 'rxjs';
 import { ToastService } from '../../services/toast.service';
 import { BRAND } from '../../config/brand.config';
+import { LOGOS } from '../../config/logos.config';
 type VentaProductoExt = VentaProducto & { editCantidad?: string };
 type PagoVentaExt = PagoVenta & { montoStr?: string };
 
@@ -18,6 +19,7 @@ type PagoVentaExt = PagoVenta & { montoStr?: string };
   styleUrls: ['./ventas.component.scss']
 })
 export class VentasComponent implements OnInit, OnDestroy {
+  logos = LOGOS;
   productos: Producto[] = [];
   filtro = '';
   carrito: VentaProductoExt[] = [];

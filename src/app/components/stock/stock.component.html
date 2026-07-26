@@ -22,15 +22,15 @@
         <option *ngFor="let c of categorias" [value]="c">{{ c }}</option>
       </select>
       <button class="btn-mass" (click)="showMassPrice = !showMassPrice">
-        <img src="logos/increase.png" alt="Aumentos" />
+        <img [src]="logos.increase" alt="Aumentos" />
         Aumentos
       </button>
       <button type="button" class="btn-primary large btn-agregar" (click)="abrirAgregarProducto()">
-        <img src="logos/add.png" alt="" aria-hidden="true" />
+        <img [src]="logos.add" alt="" aria-hidden="true" />
         Agregar producto
       </button>
       <button class="btn-primary large" *ngIf="seleccionados.size" (click)="eliminarSeleccionados()">
-        <img src="logos/delete.png" alt="Eliminar seleccionados" />
+        <img [src]="logos.delete" alt="Eliminar seleccionados" />
         Eliminar seleccionados
       </button>
     </div>
@@ -78,7 +78,7 @@
           </td>
           <td class="row-actions">
             <button class="btn-light" (click)="verInfo(p)" title="Ver info">
-              <app-icon name="info" [size]="22" color="#357A8F"></app-icon>
+              <app-icon name="info" [size]="22" color="#E07A28"></app-icon>
             </button>
             <button type="button" class="btn-secondary" (click)="abrirEditarProducto(p.id!)">Editar</button>
             <button class="btn-danger" (click)="solicitarEliminar(p)">Eliminar</button>

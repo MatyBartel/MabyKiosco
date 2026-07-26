@@ -7,6 +7,7 @@ import { Subscription } from 'rxjs';
 import { DatabaseService, Producto, TipoVenta } from '../../services/database.service';
 import { ToastService } from '../../services/toast.service';
 import { ProductoFormComponent } from '../producto-form/producto-form.component';
+import { LOGOS } from '../../config/logos.config';
 
 @Component({
   selector: 'app-stock',
@@ -16,6 +17,7 @@ import { ProductoFormComponent } from '../producto-form/producto-form.component'
   styleUrls: ['./stock.component.scss']
 })
 export class StockComponent implements OnInit, OnDestroy {
+  logos = LOGOS;
   productos: Producto[] = [];
   filtroGeneral = '';
   ordenCampo: 'codigo' | 'nombre' | 'categoria' | 'proveedor' | 'precio' | 'stock' = 'nombre';

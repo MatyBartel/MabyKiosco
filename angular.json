@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "la-esquina": {
+    "maby-kiosco": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/la-esquina",
+            "outputPath": "dist/maby-kiosco",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -27,7 +27,7 @@
             "inlineStyleLanguage": "scss",
             "assets": [
               { "glob": "**/*", "input": "public" },
-              { "glob": "**/*", "input": "src/assets" }
+              { "glob": "**/*", "input": "src/assets", "output": "assets" }
             ],
             "styles": [
               "src/styles.scss"
@@ -69,10 +69,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "la-esquina:build:production"
+              "buildTarget": "maby-kiosco:build:production"
             },
             "development": {
-              "buildTarget": "la-esquina:build:development"
+              "buildTarget": "maby-kiosco:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -91,7 +91,7 @@
             "inlineStyleLanguage": "scss",
             "assets": [
               { "glob": "**/*", "input": "public" },
-              { "glob": "**/*", "input": "src/assets" }
+              { "glob": "**/*", "input": "src/assets", "output": "assets" }
             ],
             "styles": [
               "src/styles.scss"

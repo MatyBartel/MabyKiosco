@@ -5,6 +5,7 @@ import { Subscription } from 'rxjs';
 import { DatabaseService, Gasto } from '../../services/database.service';
 import { ToastService } from '../../services/toast.service';
 import { IconComponent } from '../icon/icon.component';
+import { LOGOS } from '../../config/logos.config';
 
 @Component({
   selector: 'app-gastos',
@@ -14,6 +15,7 @@ import { IconComponent } from '../icon/icon.component';
   styleUrls: ['./gastos.component.scss']
 })
 export class GastosComponent implements OnInit, OnDestroy {
+  logos = LOGOS;
   db = inject(DatabaseService);
   private toast = inject(ToastService);
 

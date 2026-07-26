@@ -284,7 +284,7 @@ export class EstadisticasComponent implements OnInit, AfterViewInit, OnDestroy {
               ]
             }
           },
-          lineStyle: { width: 3, color: '#4A9AAD' },
+          lineStyle: { width: 3, color: '#FF9933' },
           data: valores
         }
       ]
@@ -312,7 +312,7 @@ export class EstadisticasComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     }
 
-    const palette = ['#3b82f6', '#10b981', '#f59e0b'];
+    const palette = ['#FF9933', '#10b981', '#E07A28'];
     const series = topMetodos.map((m, idx) => ({
       name: m,
       type: 'line',

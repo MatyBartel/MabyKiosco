@@ -1,6 +1,6 @@
-# Polirubro La Esquina - Sistema de Control de Stock y Ventas
+# Maby Kiosco - Sistema de Control de Stock y Ventas
 
-Aplicación de escritorio desarrollada con **Electron** y **Angular** para la gestión integral de un almacén polirubro (almacén, granja y kiosco).
+Aplicación de escritorio desarrollada con **Electron** y **Angular** para la gestión integral de un kiosco.
 
 ## Características
 
@@ -22,19 +22,19 @@ Aplicación de escritorio desarrollada con **Electron** y **Angular** para la ge
 ### Pasos
 
 ```bash
-git clone https://github.com/MatyBartel/LaEsquina.git
-cd LaEsquina
+git clone https://github.com/MatyBartel/MabyKiosco.git
+cd MabyKiosco
 npm install
 npm run postinstall
 ```
 
-La aplicación usa una **base de datos propia e independiente** de la app de ferretería:
+La aplicación usa una **base de datos propia e independiente** de otras apps del mismo sistema:
 
 ```
-Documentos/Polirubro La Esquina/datos/polirubro.db
+Documentos/Maby Kiosco/datos/mabykiosco.db
 ```
 
-No lee ni modifica `ferreteria.db`. Al abrir la app por primera vez, la base arranca vacía.
+No comparte datos con La Esquina ni otras instalaciones. Al abrir la app por primera vez, la base arranca vacía.
 
 Desde el dashboard podés abrir esa carpeta con el botón de guardar (esquina inferior derecha).
 
@@ -91,7 +91,7 @@ npm run electron:build
 | Build raro / archivos viejos | `npm run clean` y volver a buildear |
 | Solo querés probar en el navegador | `npm run start` → http://localhost:4200 |
 
-**Importante:** `electron:dev` usa el servidor en vivo (`localhost:4200`). `npm run electron` usa los archivos compilados en `dist/la-esquina/browser/`. Son dos modos distintos.
+**Importante:** `electron:dev` usa el servidor en vivo (`localhost:4200`). `npm run electron` usa los archivos compilados en `dist/maby-kiosco/browser/`. Son dos modos distintos.
 
 ## Scripts
 
@@ -106,11 +106,13 @@ npm run electron:build
 ## Estructura
 
 ```
-LaEsquina/
-├── src/app/          # Angular (componentes, servicios)
-├── electron/         # Proceso principal Electron
-├── public/logos/     # Logos e iconos de La Esquina
-└── assets/           # Icono de la app (.ico)
+MabyKiosco/
+├── src/app/              # Angular (componentes, servicios)
+├── src/assets/
+│   ├── brand/            # Logo circular y banner de Maby
+│   └── logos/            # Iconos de menú, dashboard y acciones
+├── electron/             # Proceso principal Electron
+└── assets/               # Icono .ico para instalador Windows (Electron)
 ```
 
 ## Licencia

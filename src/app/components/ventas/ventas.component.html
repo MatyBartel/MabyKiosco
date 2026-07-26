@@ -2,7 +2,7 @@
   <div class="ventas-header">
     <h1>Gestión de Ventas</h1>
     <div class="scan-status" [class.pausado]="escaneoEnPausa" *ngIf="escaneoActivo">
-      <img src="logos/barcode.png" alt="" aria-hidden="true" />
+      <img [src]="logos.barcode" alt="" aria-hidden="true" />
       <span>{{ escaneoEnPausa ? 'Escáner en pausa' : 'Escáner listo' }}</span>
     </div>
   </div>
@@ -158,7 +158,7 @@
       <div class="filtros-fecha">
         <label class="dia-label">Buscar por día:</label>
         <div class="dia-picker">
-          <button class="cal-btn" title="Abrir calendario" (click)="mostrarCalendario = !mostrarCalendario"><img src="logos/calendario.png" alt="Calendario" width="20" height="20" /></button>
+          <button class="cal-btn" title="Abrir calendario" (click)="mostrarCalendario = !mostrarCalendario"><img [src]="logos.calendario" alt="Calendario" width="20" height="20" /></button>
           <span class="dia-seleccion" *ngIf="fechaSeleccionada">{{ fechaSeleccionada }}</span>
           <button class="clear" *ngIf="fechaSeleccionada" (click)="onFechaChange('')" title="Limpiar">×</button>
           <button class="cal-btn" *ngIf="fechaSeleccionada && cantidadPagosElectronicosDia" (click)="exportarVentasDia()" title="Descargar reporte">

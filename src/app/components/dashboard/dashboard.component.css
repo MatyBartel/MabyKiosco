@@ -10,12 +10,13 @@
 }
 
 .dashboard-logo {
-  width: min(420px, 90vw);
+  width: min(560px, 94vw);
   height: auto;
   margin: 0 auto 16px;
   display: block;
-  border-radius: 10px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  border-radius: 12px;
+  object-fit: contain;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
 }
 
 .dashboard-header h1 {
@@ -69,7 +70,8 @@
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.7), 0 6px 16px rgba(0,0,0,0.06);
 }
 
-.stat-icon img {
+.stat-icon img,
+.stat-icon app-icon {
   width: 84px;
   height: 84px;
   object-fit: contain;

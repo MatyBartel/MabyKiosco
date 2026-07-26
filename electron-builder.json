@@ -1,12 +1,12 @@
 {
-  "appId": "com.laesquina.app",
-  "productName": "Polirubro La Esquina",
+  "appId": "com.mabykiosco.app",
+  "productName": "Maby Kiosco",
   "directories": {
     "output": "dist-electron",
     "buildResources": "assets"
   },
   "files": [
-    "dist/la-esquina/browser/**/*",
+    "dist/maby-kiosco/browser/**/*",
     "electron/**/*",
     "package.json",
     "!electron/**/*.ts",

@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { RouterOutlet, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ToastComponent } from './components/toast/toast.component';
+import { BRAND } from './config/brand.config';
+import { LOGOS } from './config/logos.config';
 
 @Component({
   selector: 'app-root',
@@ -11,7 +13,9 @@ import { ToastComponent } from './components/toast/toast.component';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'Polirubro La Esquina';
+  title = BRAND.nombre;
+  brand = BRAND;
+  logos = LOGOS;
   isSidebarOpen = false;
 
   toggleSidebar(): void {

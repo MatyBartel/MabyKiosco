@@ -1,12 +1,32 @@
-const { app, BrowserWindow, Menu, ipcMain, dialog, shell, screen } = require("electron");
+const { app, BrowserWindow, Menu, ipcMain, dialog, shell, screen, nativeImage } = require("electron");
 const path = require("path");
 const fs = require("fs");
 const Database = require("better-sqlite3");
 
 const isDev = process.env.NODE_ENV === "development";
 
-const DATA_DIR_NAME = "Polirubro La Esquina";
-const DB_FILE_NAME = "polirubro.db";
+if (process.platform === "win32") {
+  app.setAppUserModelId("com.mabykiosco.app");
+}
+
+function resolveAppIcon() {
+  const candidates = [
+    path.join(__dirname, "../assets/icon.ico"),
+    path.join(__dirname, "../assets/icon.png"),
+    path.join(__dirname, "../src/assets/brand/maby-icon.png"),
+  ];
+
+  for (const candidate of candidates) {
+    if (!fs.existsSync(candidate)) continue;
+    const image = nativeImage.createFromPath(candidate);
+    if (!image.isEmpty()) return image;
+  }
+
+  return null;
+}
+
+const DATA_DIR_NAME = "Maby Kiosco";
+const DB_FILE_NAME = "mabykiosco.db";
 
 let mainWindow;
 let db;
@@ -24,7 +44,7 @@ function resolveDbPath() {
 
 function resolveIndexHtml() {
   const candidates = [
-    path.join(__dirname, "../dist/la-esquina/browser/index.html"),
+    path.join(__dirname, "../dist/maby-kiosco/browser/index.html"),
     path.join(__dirname, "../dist/ferreteria-app/browser/index.html"),
   ];
   for (const candidate of candidates) {
@@ -71,18 +91,20 @@ function initDatabase() {
 }
 
 function createWindow() {
+  const appIcon = resolveAppIcon();
+
   mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
     autoHideMenuBar: true,
-    backgroundColor: '#4A8798',
+    backgroundColor: '#FFAA55',
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
       preload: path.join(__dirname, "preload.js"),
     },
-    icon: path.join(__dirname, "../assets/icon.ico"),
-    title: "Polirubro La Esquina",
+    icon: appIcon || path.join(__dirname, "../assets/icon.ico"),
+    title: "Maby Kiosco",
   });
 
   if (mainWindow.setMenuBarVisibility) {
@@ -451,7 +473,7 @@ ipcMain.handle('escpos:print-ticket', async (_event, payload) => {
     const printer = new escpos.Printer(device, { encoding: 'CP858' });
 
     const {
-      negocio = { nombre: 'La Esquina - Polirubro' },
+      negocio = { nombre: 'Maby - Kiosco' },
       fecha = '',
       numero = '',
       vendedor = '',

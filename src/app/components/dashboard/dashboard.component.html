@@ -1,13 +1,13 @@
 <div class="dashboard-container">
   <header class="dashboard-header">
-    <img src="logos/la-esquina-banner.png" alt="Polirubro La Esquina" class="dashboard-logo" />
+    <img [src]="brand.assets.banner" [alt]="brand.nombre" class="dashboard-logo" />
     <h1>Panel de Control</h1>
-    <p class="subtitle">Almacén, granja y kiosco</p>
+    <p class="subtitle">{{ brand.subtitulo }}</p>
   </header>
 
   <div class="stats-grid">
     <div class="stat-card">
-      <div class="stat-icon"><img src="logos/stock.png" alt="Total Productos" /></div>
+      <div class="stat-icon"><img [src]="logos.stock" alt="Total Productos" /></div>
       <div class="stat-content">
         <h3>{{ totalProductos }}</h3>
         <p>Total Productos</p>
@@ -15,7 +15,7 @@
     </div>
 
     <div class="stat-card ventas-hoy">
-      <div class="stat-icon"><img src="logos/ventas.png" alt="Ventas Hoy" /></div>
+      <div class="stat-icon"><img [src]="logos.ventas" alt="Ventas Hoy" /></div>
       <div class="stat-content">
         <h3>${{ totalVentasHoy | number:'1.2-2' }}</h3>
         <p>{{ tituloVentasCard }}</p>
@@ -23,7 +23,7 @@
     </div>
 
     <div class="stat-card">
-      <div class="stat-icon"><img src="logos/alerta.png" alt="Stock Bajo" /></div>
+      <div class="stat-icon"><img [src]="logos.alerta" alt="Stock Bajo" /></div>
       <div class="stat-content">
         <h3>{{ productosBajoStock }}</h3>
         <p>Stock Bajo</p>
@@ -31,7 +31,7 @@
     </div>
 
     <div class="stat-card">
-      <div class="stat-icon"><img src="logos/gastos.png" alt="Total Gastado" /></div>
+      <div class="stat-icon"><img [src]="logos.gastos" alt="Total Gastado" /></div>
       <div class="stat-content">
         <h3>${{ totalGastadoHoy | number:'1.2-2' }}</h3>
         <p>{{ tituloGastadoCard }}</p>
@@ -76,7 +76,9 @@
         <h2 style="margin:0;">{{ tituloUltimas }}</h2>
         <div class="dia-controls">
           <div class="dia-picker">
-            <button class="cal-btn" title="Elegir día" (click)="mostrarCalendario = !mostrarCalendario"><img src="logos/calendario.png" alt="Calendario" width="22" height="22" /></button>
+            <button class="cal-btn" title="Elegir día" (click)="mostrarCalendario = !mostrarCalendario">
+              <img [src]="logos.calendario" alt="Calendario" width="22" height="22" />
+            </button>
             <span class="dia-seleccion" *ngIf="fechaSeleccionada">{{ fechaSeleccionada }}</span>
             <button class="clear" *ngIf="fechaSeleccionada" (click)="limpiarFecha()" title="Limpiar">×</button>
           </div>
@@ -103,6 +105,6 @@
     </div>
   </div>
 </div> 
-<button class="fab-backup" (click)="abrirCarpetaDatos()" title="Abrir carpeta de datos (Documentos/Polirubro La Esquina/datos/polirubro.db)">
-  <img src="logos/guardar.png" alt="Abrir carpeta de datos" width="28" height="28" />
+<button class="fab-backup" (click)="abrirCarpetaDatos()" [title]="dataFolderTitle">
+  <img [src]="logos.guardar" alt="Abrir carpeta de datos" width="28" height="28" />
 </button>

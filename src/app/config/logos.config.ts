@@ -1,0 +1,17 @@
+export const LOGOS = {
+  home: 'assets/logos/home.png',
+  carrito: 'assets/logos/carrito.png',
+  stockmenu: 'assets/logos/stockmenu.png',
+  estadisticasmenu: 'assets/logos/estadisticasmenu.png',
+  gastosmenu: 'assets/logos/gastosmenu.png',
+  stock: 'assets/logos/stock.png',
+  ventas: 'assets/logos/ventas.png',
+  alerta: 'assets/logos/alerta.png',
+  gastos: 'assets/logos/gastos.png',
+  calendario: 'assets/logos/calendario.png',
+  guardar: 'assets/logos/guardar.png',
+  increase: 'assets/logos/increase.png',
+  add: 'assets/logos/add.png',
+  delete: 'assets/logos/delete.png',
+  barcode: 'assets/logos/barcode.png',
+} as const;

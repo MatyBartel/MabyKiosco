@@ -1,6 +1,11 @@
 export const BRAND = {
-  nombre: 'La Esquina - Polirubro',
-  subtitulo: 'Almacén, granja y kiosco',
-  // dir1: 'Dirección línea 1',
-  // dir2: 'Dirección línea 2',
+  nombre: 'Maby - Kiosco',
+  subtitulo: 'Kiosco',
+  dataDir: 'Maby Kiosco',
+  dbFile: 'mabykiosco.db',
+  assets: {
+    icon: 'assets/brand/maby-icon.png',
+    banner: 'assets/brand/maby-banner.png',
+    favicon: 'assets/brand/maby-icon.png',
+  },
 } as const;

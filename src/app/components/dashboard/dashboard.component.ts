@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { DatabaseService, Producto, Venta } from '../../services/database.service';
 import { Subscription } from 'rxjs';
+import { BRAND } from '../../config/brand.config';
+import { LOGOS } from '../../config/logos.config';
 
 @Component({
   selector: 'app-dashboard',
@@ -12,6 +14,8 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent implements OnInit, OnDestroy {
+  brand = BRAND;
+  logos = LOGOS;
   totalProductos = 0;
   totalVentasHoy = 0; 
   totalGastadoHoy = 0;
@@ -70,6 +74,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   get tituloUltimas(): string {
     return this.fechaSeleccionada ? 'Últimas Ventas del día' : 'Últimas Ventas';
+  }
+
+  get dataFolderTitle(): string {
+    return `Abrir carpeta de datos (Documentos/${BRAND.dataDir}/datos/${BRAND.dbFile})`;
   }
 
   onFechaChangeDesdeDate(value: string): void {
@@ -134,4 +142,4 @@ export class DashboardComponent implements OnInit, OnDestroy {
       await electronAPI.openDataFolder();
     }
   }
-} 
+}

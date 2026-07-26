@@ -1,74 +1,74 @@
-<div class="app-container">
-  
-  <button class="menu-toggle" (click)="toggleSidebar()">
-    <span class="hamburger-line"></span>
-    <span class="hamburger-line"></span>
-    <span class="hamburger-line"></span>
-  </button>
-
-  
-  <div class="sidebar-overlay" 
-       [class.show]="isSidebarOpen" 
-       (click)="closeSidebar()">
-  </div>
-
-  
-  <aside class="sidebar" [class.open]="isSidebarOpen">
-    <div class="sidebar-header">
-      <div class="brand">
-        <img src="logos/la-esquina-banner.png" alt="Polirubro La Esquina" class="brand-logo" />
-        <p class="brand-subtitle">Almacén, granja y kiosco</p>
-      </div>
-      <button class="close-btn" (click)="closeSidebar()">×</button>
-    </div>
-    
-    <nav class="sidebar-nav">
-      <a routerLink="/" 
-         routerLinkActive="active" 
-         [routerLinkActiveOptions]="{exact: true}"
-         (click)="closeSidebar()"
-         class="nav-item">
-        <span class="nav-icon"><img src="logos/home.png" alt="Inicio" width="32" height="32" /></span>
-        Inicio
-      </a>
-      
-      <a routerLink="/ventas" 
-         routerLinkActive="active" 
-         (click)="closeSidebar()"
-         class="nav-item">
-        <span class="nav-icon"><img src="logos/carrito.png" alt="Ventas" width="32" height="32" /></span>
-        Ventas
-      </a>
-      
-      <a routerLink="/stock" 
-         routerLinkActive="active" 
-         (click)="closeSidebar()"
-         class="nav-item">
-        <span class="nav-icon"><img src="logos/stockmenu.png" alt="Stock" width="32" height="32" /></span>
-        Stock
-      </a>
-      
-      <a routerLink="/estadisticas" 
-         routerLinkActive="active" 
-         (click)="closeSidebar()"
-         class="nav-item">
-        <span class="nav-icon"><img src="logos/estadisticasmenu.png" alt="Estadísticas" width="32" height="32" /></span>
-        Estadísticas
-      </a>
-      
-      <a routerLink="/gastos" 
-         routerLinkActive="active" 
-         (click)="closeSidebar()"
-         class="nav-item">
-        <span class="nav-icon"><img src="logos/gastosmenu.png" alt="Gastos" width="32" height="32" /></span>
-        Gastos
-      </a>
-    </nav>
-  </aside>
-
-  
-  <main class="main-content" [class.sidebar-open]="isSidebarOpen">
-    <router-outlet></router-outlet>
-    <app-toast-container></app-toast-container>
-  </main>
-</div>
+<div class="app-container">
+  
+  <button class="menu-toggle" (click)="toggleSidebar()">
+    <span class="hamburger-line"></span>
+    <span class="hamburger-line"></span>
+    <span class="hamburger-line"></span>
+  </button>
+
+  
+  <div class="sidebar-overlay" 
+       [class.show]="isSidebarOpen" 
+       (click)="closeSidebar()">
+  </div>
+
+  
+  <aside class="sidebar" [class.open]="isSidebarOpen">
+    <div class="sidebar-header">
+      <div class="brand">
+        <img [src]="brand.assets.icon" [alt]="brand.nombre" class="brand-logo" />
+        <p class="brand-subtitle">{{ brand.subtitulo }}</p>
+      </div>
+      <button class="close-btn" (click)="closeSidebar()">×</button>
+    </div>
+    
+    <nav class="sidebar-nav">
+      <a routerLink="/" 
+         routerLinkActive="active" 
+         [routerLinkActiveOptions]="{exact: true}"
+         (click)="closeSidebar()"
+         class="nav-item">
+        <span class="nav-icon"><img [src]="logos.home" alt="Inicio" width="32" height="32" /></span>
+        Inicio
+      </a>
+      
+      <a routerLink="/ventas" 
+         routerLinkActive="active" 
+         (click)="closeSidebar()"
+         class="nav-item">
+        <span class="nav-icon"><img [src]="logos.carrito" alt="Ventas" width="32" height="32" /></span>
+        Ventas
+      </a>
+      
+      <a routerLink="/stock" 
+         routerLinkActive="active" 
+         (click)="closeSidebar()"
+         class="nav-item">
+        <span class="nav-icon"><img [src]="logos.stockmenu" alt="Stock" width="32" height="32" /></span>
+        Stock
+      </a>
+      
+      <a routerLink="/estadisticas" 
+         routerLinkActive="active" 
+         (click)="closeSidebar()"
+         class="nav-item">
+        <span class="nav-icon"><img [src]="logos.estadisticasmenu" alt="Estadísticas" width="32" height="32" /></span>
+        Estadísticas
+      </a>
+      
+      <a routerLink="/gastos" 
+         routerLinkActive="active" 
+         (click)="closeSidebar()"
+         class="nav-item">
+        <span class="nav-icon"><img [src]="logos.gastosmenu" alt="Gastos" width="32" height="32" /></span>
+        Gastos
+      </a>
+    </nav>
+  </aside>
+
+  
+  <main class="main-content" [class.sidebar-open]="isSidebarOpen">
+    <router-outlet></router-outlet>
+    <app-toast-container></app-toast-container>
+  </main>
+</div>

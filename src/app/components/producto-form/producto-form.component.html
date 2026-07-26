@@ -35,7 +35,7 @@
             (ngModelChange)="onCodigoBarrasChange($event)"
           />
           <button type="button" class="btn-icon btn-scan" title="Escanear código de barras" (click)="abrirModalEscanner()">
-            <img src="logos/barcode.png" alt="" aria-hidden="true" />
+            <img [src]="logos.barcode" alt="" aria-hidden="true" />
           </button>
         </div>
       </div>
@@ -224,7 +224,7 @@
 
   <div class="modal-body-escanner">
     <div class="scan-visual">
-      <img src="logos/barcode.png" alt="" class="scan-icon" aria-hidden="true" />
+      <img [src]="logos.barcode" alt="" class="scan-icon" aria-hidden="true" />
       <p class="scan-instructions">Apuntá el lector al código de barras del producto.</p>
       <p class="scan-hint">El lector USB escribe el código automáticamente. También podés tipearlo y presionar Enter.</p>
     </div>

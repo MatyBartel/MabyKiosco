@@ -5,6 +5,7 @@ import { DatabaseService, Producto, TipoVenta } from '../../services/database.se
 import { BarcodeScannerService } from '../../services/barcode-scanner.service';
 import { ToastService } from '../../services/toast.service';
 import { IconComponent } from '../icon/icon.component';
+import { LOGOS } from '../../config/logos.config';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -15,6 +16,7 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./producto-form.component.scss']
 })
 export class ProductoFormComponent implements OnInit, OnChanges, OnDestroy {
+  logos = LOGOS;
   @Input() productoId: number | null = null;
   @Output() cerrar = new EventEmitter<void>();
   @Output() guardado = new EventEmitter<void>();
