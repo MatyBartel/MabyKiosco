@@ -2,6 +2,7 @@ const { app, BrowserWindow, Menu, ipcMain, dialog, shell, screen, nativeImage } 
 const path = require("path");
 const fs = require("fs");
 const Database = require("better-sqlite3");
+const backupService = require("./backup");
 
 const isDev = process.env.NODE_ENV === "development";
 
@@ -221,6 +222,7 @@ function createMenu() {
 
 app.whenReady().then(() => {
   initDatabase();
+  backupService.startBackupScheduler(() => db);
   createWindow();
 
   app.on("activate", () => {
@@ -228,6 +230,13 @@ app.whenReady().then(() => {
       createWindow();
     }
   });
+});
+
+app.on("before-quit", () => {
+  backupService.stopBackupScheduler();
+  try {
+    db?.close();
+  } catch {}
 });
 
 app.on("window-all-closed", () => {
@@ -986,7 +995,34 @@ ipcMain.handle("open-data-folder", async () => {
     return { ok: true };
   } catch (e) {
     console.error("[main] open-data-folder error", e);
-    return { ok: false };
+    return { ok: false, error: e?.message || String(e) };
+  }
+});
+
+ipcMain.handle("backup:get-status", async () => {
+  try {
+    return { ok: true, status: backupService.getBackupStatus() };
+  } catch (e) {
+    return { ok: false, error: e?.message || String(e) };
+  }
+});
+
+ipcMain.handle("backup:run-now", async () => {
+  try {
+    if (!db) return { ok: false, error: "Base de datos no disponible" };
+    return await backupService.runBackup(db);
+  } catch (e) {
+    return { ok: false, error: e?.message || String(e) };
+  }
+});
+
+ipcMain.handle("backup:open-folder", async () => {
+  try {
+    const dir = backupService.resolveLocalBackupDir();
+    await shell.openPath(dir);
+    return { ok: true, path: dir };
+  } catch (e) {
+    return { ok: false, error: e?.message || String(e) };
   }
 });
 

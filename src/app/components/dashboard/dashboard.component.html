@@ -104,7 +104,16 @@
       </div>
     </div>
   </div>
-</div> 
+</div>
 <button class="fab-backup" (click)="abrirCarpetaDatos()" [title]="dataFolderTitle">
   <img [src]="logos.guardar" alt="Abrir carpeta de datos" width="28" height="28" />
 </button>
+<p class="backup-hint" *ngIf="backupDetalle || nubeDetectada !== null">
+  <span *ngIf="backupDetalle">{{ backupDetalle }}</span>
+  <span class="nube-estado" *ngIf="nubeDetectada !== null">
+    <span class="nube-label">Nube</span>
+    <span class="nube-icono" [class.ok]="nubeDetectada" [class.no]="!nubeDetectada" [title]="nubeDetectada ? 'Google Drive u OneDrive detectado' : 'Instalá Google Drive u OneDrive'">
+      {{ nubeDetectada ? '✓' : '✗' }}
+    </span>
+  </span>
+</p>

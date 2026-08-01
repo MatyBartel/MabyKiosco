@@ -24,7 +24,11 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   productosBajoStock = 0;
   totalVentas = 0;
   productosBajoStockList: Producto[] = [];
-  ultimasVentas: Venta[] = []; 
+  ultimasVentas: Venta[] = [];
+
+  backupTitulo = 'Backup automático a las 12:00';
+  backupDetalle = '';
+  nubeDetectada: boolean | null = null;
 
   fechaSeleccionada = '';
   mostrarCalendario = false;
@@ -37,6 +41,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnInit(): void {
     this.cargarDatos();
+    this.cargarEstadoBackup();
   }
 
   ngAfterViewInit(): void {
@@ -104,7 +109,27 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   get dataFolderTitle(): string {
-    return `Abrir carpeta de datos (Documentos/${BRAND.dataDir}/datos/${BRAND.dbFile})`;
+    const base = `Abrir carpeta de datos (Documentos/${BRAND.dataDir}/datos/${BRAND.dbFile})`;
+    return this.backupDetalle ? `${base}\n${this.backupDetalle}` : base;
+  }
+
+  private async cargarEstadoBackup(): Promise<void> {
+    const electronAPI: any = (window as any)?.electronAPI;
+    if (!electronAPI?.backupGetStatus) return;
+    try {
+      const res = await electronAPI.backupGetStatus();
+      if (!res?.ok || !res.status) return;
+      const s = res.status;
+      const partes: string[] = [`Backup diario: ${s.scheduledTime || '12:00'}`];
+      if (s.lastLocalBackup) {
+        const fecha = new Date(s.lastLocalBackup);
+        partes.push(`Último: ${fecha.toLocaleString('es-AR')}`);
+      } else {
+        partes.push('Último: pendiente');
+      }
+      this.nubeDetectada = !!s.cloudDetected;
+      this.backupDetalle = partes.join(' · ');
+    } catch {}
   }
 
   onFechaChangeDesdeDate(value: string): void {

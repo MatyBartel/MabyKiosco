@@ -340,6 +340,59 @@
 }
 .fab-backup:hover { background: #f5f7f9; }
 
+.backup-hint {
+  position: fixed;
+  right: 20px;
+  bottom: 82px;
+  max-width: min(360px, calc(100vw - 40px));
+  margin: 0;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.94);
+  color: #5d6d7e;
+  font-size: 0.78rem;
+  line-height: 1.35;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.nube-estado {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+}
+
+.nube-label {
+  color: #5d6d7e;
+}
+
+.nube-icono {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.nube-icono.ok {
+  background: #d5f5e3;
+  color: #1e8449;
+}
+
+.nube-icono.no {
+  background: #fadbd8;
+  color: #c0392b;
+}
+
 @media (max-width: 768px) {
   .stats-grid {
     grid-template-columns: 1fr;

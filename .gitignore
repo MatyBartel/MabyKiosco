@@ -53,5 +53,4 @@ Thumbs.db
 # Datos sensibles del negocio
 /backups/
 
-# Carpeta residual (eliminar manualmente si queda)
-/ferreteria-app
+/dist-electron
