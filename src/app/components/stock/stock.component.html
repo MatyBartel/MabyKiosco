@@ -53,7 +53,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let p of productosVista; trackBy: trackByProducto" [class.low]="p.stock <= p.stockMinimo">
+        <tr *ngFor="let p of productosVista; trackBy: trackByProducto" [class.low]="p.stockMinimo > 0 && p.stock <= p.stockMinimo">
           <td>
             <input type="checkbox" [checked]="p.id && seleccionados.has(p.id)" (change)="toggleSeleccion(p.id)" />
             {{ p.codigo }}
@@ -106,13 +106,13 @@
   <div class="mass-panel" *ngIf="showMassPrice">
     <div class="card">
       <div class="row between">
-        <div class="titulo">Ajuste masivo de stock</div>
+        <div class="titulo">Ajuste masivo de % ganancia</div>
         <button class="close" (click)="showMassPrice = false">×</button>
       </div>
       <div class="controls">
         <div class="grp">
-          <label>Cantidad a sumar/restar</label>
-          <input type="number" [(ngModel)]="cantidadStock" placeholder="Ej: 5 ó -3" />
+          <label>Puntos de % ganancia a sumar/restar</label>
+          <input type="number" [(ngModel)]="ajusteGananciaPct" placeholder="Ej: 10 ó -10" step="0.01" />
         </div>
         <div class="grp">
           <label>Por categoría (opcional)</label>
@@ -125,8 +125,9 @@
       <div class="help">
         - Si seleccionás productos en la tabla, se aplica sólo a esos.
         - Si elegís una categoría, se aplica a esa categoría.
-        - Si no seleccionás nada, aplica a todos los productos filtrados actualmente.
-        - La cantidad puede ser negativa para descontar.
+        - Si no seleccionás nada, aplica a los productos filtrados actualmente.
+        - Ejemplo: 10 pasa de 30% a 40% de ganancia. -10 pasa de 30% a 20%.
+        - También recalcula el precio de venta según costo + % ganancia.
       </div>
       <div class="actions">
         <button class="btn-secondary" (click)="seleccionarTodosVista()">Seleccionar visibles</button>

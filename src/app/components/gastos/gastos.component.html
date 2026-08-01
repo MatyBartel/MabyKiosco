@@ -74,7 +74,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let g of gastosFiltrados">
+        <tr *ngFor="let g of gastosPaginados">
           <td>{{ g.fecha | date:'dd/MM/yyyy' }}</td>
           <td>{{ g.descripcion }}</td>
           <td><span class="chip-cat">{{ g.categoria }}</span></td>
@@ -93,6 +93,17 @@
         </tr>
       </tbody>
     </table>
+  </div>
+
+  <div class="paginacion" *ngIf="totalGastosFiltrados > pageSize">
+    <div class="info">Mostrando {{ paginaDesde }}–{{ paginaHasta }} de {{ totalGastosFiltrados }}</div>
+    <div class="controles">
+      <button type="button" class="btn-nav" (click)="goToPage(1)" [disabled]="page === 1">«</button>
+      <button type="button" class="btn-nav" (click)="goToPage(page - 1)" [disabled]="page === 1">‹</button>
+      <span class="pagina">{{ page }}</span>
+      <button type="button" class="btn-nav" (click)="goToPage(page + 1)" [disabled]="page * pageSize >= totalGastosFiltrados">›</button>
+      <button type="button" class="btn-nav" (click)="goToPage(999999)" [disabled]="page * pageSize >= totalGastosFiltrados">»</button>
+    </div>
   </div>
 </div>
 

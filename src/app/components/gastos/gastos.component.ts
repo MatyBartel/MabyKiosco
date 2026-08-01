@@ -30,6 +30,8 @@ export class GastosComponent implements OnInit, OnDestroy {
   mes = new Date().getMonth();
   diaFiltro: string | null = null;
   busqueda = '';
+  page = 1;
+  readonly pageSize = 5;
 
   mostrarFormulario = false;
   mostrarModalCategorias = false;
@@ -95,6 +97,36 @@ export class GastosComponent implements OnInit, OnDestroy {
       .sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime());
   }
 
+  get totalGastosFiltrados(): number {
+    return this.gastosFiltrados.length;
+  }
+
+  get gastosPaginados(): Gasto[] {
+    const arr = this.gastosFiltrados;
+    const maxPage = Math.max(1, Math.ceil(arr.length / this.pageSize));
+    if (this.page > maxPage) this.page = maxPage;
+    const start = (this.page - 1) * this.pageSize;
+    return arr.slice(start, start + this.pageSize);
+  }
+
+  get paginaDesde(): number {
+    return this.totalGastosFiltrados ? (this.page - 1) * this.pageSize + 1 : 0;
+  }
+
+  get paginaHasta(): number {
+    const fin = this.page * this.pageSize;
+    return fin > this.totalGastosFiltrados ? this.totalGastosFiltrados : fin;
+  }
+
+  goToPage(p: number): void {
+    const max = Math.max(1, Math.ceil(this.totalGastosFiltrados / this.pageSize));
+    this.page = Math.max(1, Math.min(max, Math.trunc(p)));
+  }
+
+  private resetPagina(): void {
+    this.page = 1;
+  }
+
   get totalMes(): number {
     const { inicio, fin } = this.db.getInicioFinMes(this.anio, this.mes);
     return this.db.getTotalGastosEnRango(inicio, fin);
@@ -115,7 +147,7 @@ export class GastosComponent implements OnInit, OnDestroy {
   }
 
   private refrescarVista(): void {
-    this.gastos = this.gastosFiltrados;
+    this.gastos = this.gastosPaginados;
   }
 
   private fechaHoyInput(): string {
@@ -130,6 +162,7 @@ export class GastosComponent implements OnInit, OnDestroy {
     } else {
       this.mes--;
     }
+    this.resetPagina();
     this.refrescarVista();
   }
 
@@ -140,16 +173,19 @@ export class GastosComponent implements OnInit, OnDestroy {
     } else {
       this.mes++;
     }
+    this.resetPagina();
     this.refrescarVista();
   }
 
   onMesChange(val: string): void {
     this.mes = Number(val);
+    this.resetPagina();
     this.refrescarVista();
   }
 
   onAnioChange(val: string): void {
     this.anio = Number(val);
+    this.resetPagina();
     this.refrescarVista();
   }
 
@@ -160,15 +196,18 @@ export class GastosComponent implements OnInit, OnDestroy {
       this.anio = y;
       this.mes = m - 1;
     }
+    this.resetPagina();
     this.refrescarVista();
   }
 
   limpiarDiaFiltro(): void {
     this.diaFiltro = null;
+    this.resetPagina();
     this.refrescarVista();
   }
 
   onBusquedaChange(): void {
+    this.resetPagina();
     this.refrescarVista();
   }
 

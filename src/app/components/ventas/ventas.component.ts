@@ -27,6 +27,8 @@ export class VentasComponent implements OnInit, OnDestroy {
   vendedor = 'Vendedor 1';
   cliente = '';
   private sub?: Subscription;
+  private ventasSub?: Subscription;
+  ventasRevision = 0;
   ventaAEliminar: Venta | null = null;
   restockConfirm = true;
   fechaSeleccionada: string = '';
@@ -50,7 +52,7 @@ export class VentasComponent implements OnInit, OnDestroy {
   ultimoEscaneo = '';
   escaneoActivo = false;
 
-  private db = inject(DatabaseService);
+  db = inject(DatabaseService);
   private toast = inject(ToastService);
   private barcodeScanner = inject(BarcodeScannerService);
 
@@ -61,6 +63,9 @@ export class VentasComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.sub = this.db.getProductos().subscribe(items => (this.productos = items));
+    this.ventasSub = this.db.getVentas().subscribe(() => {
+      this.ventasRevision++;
+    });
     this.db.getVendedores().subscribe(vs => {
       this.vendedores = vs;
       if (!this.vendedores.includes(this.vendedor) && this.vendedores.length) {
@@ -73,6 +78,7 @@ export class VentasComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.sub?.unsubscribe();
+    this.ventasSub?.unsubscribe();
     this.barcodeScanner.stopCapture();
     this.escaneoActivo = false;
   }
@@ -133,11 +139,7 @@ export class VentasComponent implements OnInit, OnDestroy {
     }
 
     this.ultimoEscaneo = codigo;
-    if ((producto.stock || 0) <= 0) {
-      this.toast.show(`${producto.nombre}: sin stock`, 'warning');
-    } else {
-      this.toast.show(`${producto.nombre}: stock insuficiente`, 'warning');
-    }
+    this.toast.show(`${producto.nombre}: no se pudo agregar`, 'warning');
   }
 
   get productosFiltrados(): Producto[] {
@@ -174,6 +176,12 @@ export class VentasComponent implements OnInit, OnDestroy {
   }
   trackByProductoCatalogo(_i: number, p: Producto): number | string { return p.id || p.codigo; }
 
+  etiquetaStock(p: Producto): string {
+    const stock = Number(p.stock) || 0;
+    if (p.tipoVenta === 'kg') return `${stock} kg`;
+    return String(stock);
+  }
+
   // Paginación del carrito (productos en la venta)
   pageCarrito = 1;
   pageSizeCarrito = 6;
@@ -196,14 +204,7 @@ export class VentasComponent implements OnInit, OnDestroy {
     this.pageCarrito = Math.max(1, Math.min(max, Math.trunc(p)));
   }
 
-  agregarAlCarrito(p: Producto, opts?: { silencioso?: boolean }): boolean {
-    const disponible = this.stockDisponible(p.id!);
-    if (disponible < 1) {
-      if (!opts?.silencioso) {
-        this.toast.show('Sin stock disponible para este producto', 'warning');
-      }
-      return false;
-    }
+  agregarAlCarrito(p: Producto, _opts?: { silencioso?: boolean }): boolean {
     const existente = this.carrito.find(vp => vp.productoId === p.id);
     if (existente) {
       existente.cantidad += 1;
@@ -223,28 +224,12 @@ export class VentasComponent implements OnInit, OnDestroy {
     return true;
   }
 
-  private stockDisponible(productoId: number): number {
-    const prod = this.db.getProductoById(productoId);
-    if (!prod) return 0;
-    const enCarrito = this.carrito.find(vp => vp.productoId === productoId)?.cantidad || 0;
-    return Math.max(0, (prod.stock || 0) - enCarrito);
-  }
-
   quitarDelCarrito(vp: VentaProductoExt): void {
     this.carrito = this.carrito.filter(x => x !== vp);
   }
 
   actualizarCantidad(vp: VentaProductoExt): void {
     if (vp.cantidad <= 0) vp.cantidad = 0.001;
-    const prod = this.db.getProductoById(vp.productoId);
-    const enCarrito = vp.cantidad;
-    const maxPermitido = prod ? (prod.stock || 0) : 0;
-    if (prod && enCarrito > maxPermitido) {
-      vp.cantidad = maxPermitido;
-      vp.editCantidad = String(maxPermitido);
-      this.toast.show('Se ajustó a stock disponible', 'info');
-    }
-    // Redondear a pesos enteros
     vp.subtotal = Math.round(vp.cantidad * vp.precioUnitario);
   }
 
@@ -468,7 +453,7 @@ export class VentasComponent implements OnInit, OnDestroy {
 
     const ok = this.db.crearVenta(venta);
     if (!ok) {
-      this.toast.show('Stock insuficiente para alguno de los productos', 'warning');
+      this.toast.show('No se pudo registrar la venta', 'error');
       return;
     }
     this.toast.show('Venta registrada', 'success');
@@ -695,11 +680,16 @@ export class VentasComponent implements OnInit, OnDestroy {
 
   confirmarEliminarVenta(): void {
     const v = this.ventaAEliminar;
-    if (!v || !v.id) {
+    if (!v || v.id == null || Number(v.id) <= 0) {
+      this.toast.show('No se pudo identificar la venta a eliminar', 'error');
       this.ventaAEliminar = null;
       return;
     }
-    this.db.eliminarVenta(v.id, this.restockConfirm);
+    const ok = this.db.eliminarVenta(Number(v.id), this.restockConfirm);
+    if (!ok) {
+      this.toast.show('No se pudo eliminar la venta', 'error');
+      return;
+    }
     this.toast.show('Venta eliminada', 'info');
     this.ventaAEliminar = null;
   }

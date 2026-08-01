@@ -28,7 +28,6 @@ export class ProductoFormComponent implements OnInit, OnChanges, OnDestroy {
   readonly tiposVenta: { value: TipoVenta; label: string }[] = [
     { value: 'unidad', label: 'Por unidad' },
     { value: 'kg', label: 'Por kilo' },
-    { value: 'litro', label: 'Por litro' },
   ];
 
   categorias: string[] = [];
@@ -105,13 +104,11 @@ export class ProductoFormComponent implements OnInit, OnChanges, OnDestroy {
 
   get etiquetaPrecio(): string {
     if (this.tipoVenta === 'kg') return 'Precio de venta ($/kg)*';
-    if (this.tipoVenta === 'litro') return 'Precio de venta ($/litro)*';
     return 'Precio de venta*';
   }
 
   get etiquetaStock(): string {
     if (this.tipoVenta === 'kg') return 'Stock inicial (kg)';
-    if (this.tipoVenta === 'litro') return 'Stock inicial (litros)';
     return 'Stock inicial';
   }
 
@@ -137,7 +134,7 @@ export class ProductoFormComponent implements OnInit, OnChanges, OnDestroy {
       this.precioCosto = p.precioCosto;
       this.porcentajeGanancia = p.porcentajeGanancia;
       this.precio = p.precio;
-      this.tipoVenta = p.tipoVenta || 'unidad';
+      this.tipoVenta = p.tipoVenta === 'kg' ? 'kg' : 'unidad';
       this.descripcion = p.descripcion;
       this.stock = p.stock;
       this.stockMinimo = p.stockMinimo;

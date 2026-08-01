@@ -14,10 +14,10 @@
       </div>
     </div>
 
-    <div class="stat-card ventas-hoy">
+    <div class="stat-card stat-monto ventas-hoy">
       <div class="stat-icon"><img [src]="logos.ventas" alt="Ventas Hoy" /></div>
       <div class="stat-content">
-        <h3>${{ totalVentasHoy | number:'1.2-2' }}</h3>
+        <h3 #statMonto class="stat-value">${{ totalVentasHoy | number:'1.2-2' }}</h3>
         <p>{{ tituloVentasCard }}</p>
       </div>
     </div>
@@ -30,10 +30,10 @@
       </div>
     </div>
 
-    <div class="stat-card">
+    <div class="stat-card stat-monto gastos-hoy">
       <div class="stat-icon"><img [src]="logos.gastos" alt="Total Gastado" /></div>
       <div class="stat-content">
-        <h3>${{ totalGastadoHoy | number:'1.2-2' }}</h3>
+        <h3 #statMonto class="stat-value">${{ totalGastadoHoy | number:'1.2-2' }}</h3>
         <p>{{ tituloGastadoCard }}</p>
       </div>
     </div>

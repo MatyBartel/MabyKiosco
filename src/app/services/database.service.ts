@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 
-export type TipoVenta = 'unidad' | 'kg' | 'litro';
+export type TipoVenta = 'unidad' | 'kg';
 
 export interface Producto {
   id?: number;
@@ -157,7 +157,8 @@ export class DatabaseService {
       }
       const productosRaw = JSON.parse((await electronAPI.kvGet('productos')) || '[]');
       const productos = productosRaw.map((p: any) => this.normalizarProducto(p));
-      const ventas = JSON.parse((await electronAPI.kvGet('ventas')) || '[]');
+      const ventasRaw = JSON.parse((await electronAPI.kvGet('ventas')) || '[]');
+      const ventas = this.normalizarVentas(ventasRaw);
       const categorias = JSON.parse((await electronAPI.kvGet('categorias')) || '[]');
       const proveedoresListaRaw = JSON.parse((await electronAPI.kvGet('proveedoresLista')) || 'null');
       const vendedores = JSON.parse((await electronAPI.kvGet('vendedores')) || '[]');
@@ -195,8 +196,11 @@ export class DatabaseService {
       if (this.debePersistirCategoriasGasto(categoriasGastoRaw, categoriasGasto)) {
         this.persistirCategoriasGasto();
       }
-      if (productosRaw.some((p: any) => this.necesitaMigracion(p))) {
+      if (productosRaw.some((p: any) => this.necesitaMigracion(p) || p?.tipoVenta === 'litro')) {
         this.persistirProductos();
+      }
+      if (ventasRaw.some((v: any) => !Number(v?.id) || Number(v.id) <= 0)) {
+        this.persistirVentas();
       }
     } catch { this.inicializarEjemplo(); }
   }
@@ -227,9 +231,7 @@ export class DatabaseService {
       }
     }
 
-    const tipoVenta: TipoVenta = raw?.tipoVenta === 'kg' || raw?.tipoVenta === 'litro'
-      ? raw.tipoVenta
-      : 'unidad';
+    const tipoVenta: TipoVenta = raw?.tipoVenta === 'kg' ? 'kg' : 'unidad';
 
     return {
       id: raw?.id,
@@ -247,6 +249,31 @@ export class DatabaseService {
       proveedor: String(raw?.proveedor || '').trim(),
       fechaCreacion: raw?.fechaCreacion ? new Date(raw.fechaCreacion) : new Date()
     };
+  }
+
+  private normalizarVentas(rawVentas: any[]): Venta[] {
+    let maxId = 0;
+    const ventas = (Array.isArray(rawVentas) ? rawVentas : []).map(raw => {
+      const idNum = Number(raw?.id);
+      const id = Number.isFinite(idNum) && idNum > 0 ? idNum : 0;
+      if (id > maxId) maxId = id;
+      return {
+        ...raw,
+        id,
+        fecha: raw?.fecha ? new Date(raw.fecha) : new Date(),
+        productos: Array.isArray(raw?.productos) ? raw.productos : [],
+        pagos: Array.isArray(raw?.pagos) ? raw.pagos : [],
+        total: Number(raw?.total) || 0,
+      } as Venta;
+    });
+
+    let nextId = maxId + 1;
+    for (const v of ventas) {
+      if (!v.id || v.id <= 0) {
+        v.id = nextId++;
+      }
+    }
+    return ventas;
   }
 
   generarCodigoInterno(): string {
@@ -745,23 +772,22 @@ export class DatabaseService {
   }
 
   getVentaById(id: number): Venta | undefined {
-    return this.ventasSubject.value.find(v => v.id === id);
+    const numId = Number(id);
+    return this.ventasSubject.value.find(v => Number(v.id) === numId);
   }
 
   crearVenta(venta: Venta): boolean {
     const ventas = this.ventasSubject.value;
-    venta.id = Math.max(...ventas.map(v => v.id || 0)) + 1;
+    const maxId = ventas.length ? Math.max(...ventas.map(v => Number(v.id) || 0)) : 0;
+    venta.id = maxId + 1;
     for (const vp of venta.productos) {
-      const p = this.getProductoById(vp.productoId);
-      if (!p || (p.stock - vp.cantidad) < 0) {
-        return false;
-      }
+      if (!this.getProductoById(vp.productoId)) return false;
     }
     let total = 0;
     venta.productos.forEach(vp => {
       vp.subtotal = Number(vp.cantidad) * Number(vp.precioUnitario);
       total += vp.subtotal;
-      this.actualizarStock(vp.productoId, -vp.cantidad);
+      this.descontarStockVenta(vp.productoId, vp.cantidad);
     });
     let descuento = 0;
     if (typeof venta.descuentoPct === 'number' && !isNaN(venta.descuentoPct)) {
@@ -787,19 +813,22 @@ export class DatabaseService {
     return true;
   }
 
-  eliminarVenta(id: number, restock: boolean = true): void {
-    const venta = this.getVentaById(id);
-    if (!venta) return;
+  eliminarVenta(id: number, restock: boolean = true): boolean {
+    const numId = Number(id);
+    if (!Number.isFinite(numId) || numId <= 0) return false;
+    const venta = this.getVentaById(numId);
+    if (!venta) return false;
     if (restock) {
       for (const vp of venta.productos) {
         this.actualizarStock(vp.productoId, vp.cantidad);
       }
     }
-    const ventas = this.ventasSubject.value.filter(v => v.id !== id);
+    const ventas = this.ventasSubject.value.filter(v => Number(v.id) !== numId);
     this.ventasSubject.next(ventas);
     this.persistirVentas();
     this.persistirSqliteKv('productos', this.productosSubject.value);
     this.persistirSqliteKv('ventas', this.ventasSubject.value);
+    return true;
   }
 
   buscarProductos(termino: string): Producto[] {
@@ -812,7 +841,19 @@ export class DatabaseService {
   }
 
   getProductosBajoStock(): Producto[] {
-    return this.productosSubject.value.filter(p => p.stock <= p.stockMinimo);
+    return this.productosSubject.value.filter(p =>
+      p.stockMinimo > 0 && p.stock <= p.stockMinimo
+    );
+  }
+
+  /** Descuenta stock solo si el producto tiene inventario cargado (> 0). */
+  private descontarStockVenta(productoId: number, cantidad: number): void {
+    const p = this.getProductoById(productoId);
+    if (!p) return;
+    const stockActual = Number(p.stock) || 0;
+    if (stockActual <= 0) return;
+    const descontar = Math.min(cantidad, stockActual);
+    this.actualizarStock(productoId, -descontar);
   }
 
   getVentasPorFecha(fechaInicio: Date, fechaFin: Date): Venta[] {

@@ -19,7 +19,10 @@
         <li *ngFor="let p of productosCatalogoPaginados; trackBy: trackByProductoCatalogo">
           <div class="info">
             <div class="nombre">{{ p.nombre }}</div>
-            <div class="meta meta-principal">{{ p.codigo }} • ${{ p.precio | number:'1.0-0' }} • Stock: {{ p.stock }}</div>
+            <div class="meta meta-principal">
+              {{ p.codigo }} • ${{ p.precio | number:'1.0-0' }}
+              <span class="stock-tag">• Stock: {{ etiquetaStock(p) }}</span>
+            </div>
             <div class="meta desc" *ngIf="p.descripcion">{{ p.descripcion }}</div>
           </div>
           <button class="add" (click)="agregarAlCarrito(p)"><app-icon name="plus" [size]="18" color="#ffffff"></app-icon></button>
@@ -220,118 +223,117 @@
       </div>
       </div>
     </section>
+  </div>
 
-    
-    <div class="modal-backdrop" *ngIf="ventaAEliminar" (click)="cancelarEliminarVenta()"></div>
-    <div class="modal" *ngIf="ventaAEliminar">
-      <div class="modal-header">
-        <h3>Eliminar venta</h3>
-        <button class="close" (click)="cancelarEliminarVenta()">×</button>
-      </div>
-      <div class="modal-body">
-        <div class="confirm-form">
-          <div class="row">
-            <label>Número:</label>
-            <span>{{ ventaAEliminar!.numeroTicket }}</span>
-          </div>
-          <div class="row">
-            <label>Fecha:</label>
-            <span>{{ ventaAEliminar!.fecha | date:'short' }}</span>
-          </div>
-          <div class="row">
-            <label>Total:</label>
-            <span>${{ ventaAEliminar!.total | number:'1.2-2' }}</span>
-          </div>
-          <div class="row checkbox">
-            <label><input type="checkbox" [(ngModel)]="restockConfirm" /> Restaurar stock de productos</label>
-          </div>
+  <div class="modal-backdrop" *ngIf="ventaAEliminar" (click)="cancelarEliminarVenta()"></div>
+  <div class="modal" *ngIf="ventaAEliminar" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Eliminar venta</h3>
+      <button class="close" (click)="cancelarEliminarVenta()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="confirm-form">
+        <div class="row">
+          <label>Número:</label>
+          <span>{{ ventaAEliminar!.numeroTicket }}</span>
         </div>
-      </div>
-      <div class="modal-actions">
-        <button class="btn-light" (click)="cancelarEliminarVenta()">Cancelar</button>
-        <button class="btn-danger" (click)="confirmarEliminarVenta()">Eliminar</button>
+        <div class="row">
+          <label>Fecha:</label>
+          <span>{{ ventaAEliminar!.fecha | date:'short' }}</span>
+        </div>
+        <div class="row">
+          <label>Total:</label>
+          <span>${{ ventaAEliminar!.total | number:'1.2-2' }}</span>
+        </div>
+        <div class="row checkbox">
+          <label><input type="checkbox" name="restockConfirm" [(ngModel)]="restockConfirm" /> Restaurar stock de productos</label>
+        </div>
       </div>
     </div>
+    <div class="modal-actions">
+      <button type="button" class="btn-light" (click)="cancelarEliminarVenta()">Cancelar</button>
+      <button type="button" class="btn-danger" (click)="confirmarEliminarVenta()">Eliminar</button>
+    </div>
+  </div>
 
-    <div class="modal-backdrop" *ngIf="mostrarResumenVenta" (click)="cerrarResumenVenta()"></div>
-    <div class="modal modal-resumen" *ngIf="mostrarResumenVenta">
-      <div class="modal-header">
-        <h3>Resumen de venta</h3>
-        <button class="close" (click)="cerrarResumenVenta()">×</button>
-      </div>
-      <div class="modal-body">
-        <div class="resumen">
-          <div class="fila">
-            <span>Fecha</span>
-            <span class="valor">{{ ahora | date:'short' }}</span>
-          </div>
-          <div class="tabla-wrapper">
-            <table class="tabla-resumen">
-              <thead>
-                <tr>
-                  <th>Producto</th>
-                  <th>Cant.</th>
-                  <th>PU</th>
-                  <th>Subtotal</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let vp of (totalManual>0 ? carritoResumen : carrito)">
-                  <td>{{ vp.nombre }}</td>
-                  <td>{{ vp.cantidad }}</td>
-                  <td>${{ vp.precioUnitario | number:'1.0-0' }}</td>
-                  <td>${{ vp.subtotal | number:'1.0-0' }}</td>
-                </tr>
-              </tbody>
-              <tfoot>
-                <tr *ngIf="descuentoPct">
-                  <td colspan="3" class="right">Descuento ({{ descuentoPct }}%)</td>
-                  <td class="negativo">- ${{ descuentoMonto | number:'1.0-0' }}</td>
-                </tr>
-                <tr *ngIf="redondeoCarrito > 0 && totalManual === 0">
-                  <td colspan="3" class="right">Redondeo</td>
-                  <td>${{ redondeoCarrito | number:'1.0-0' }}</td>
-                </tr>
-                <tr>
-                  <td colspan="3" class="right total-label">Total</td>
-                  <td class="total-valor">${{ totalConRedondeo | number:'1.0-0' }}</td>
-                </tr>
-              </tfoot>
-            </table>
-          </div>
+  <div class="modal-backdrop" *ngIf="mostrarResumenVenta" (click)="cerrarResumenVenta()"></div>
+  <div class="modal modal-resumen" *ngIf="mostrarResumenVenta" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Resumen de venta</h3>
+      <button class="close" (click)="cerrarResumenVenta()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="resumen">
+        <div class="fila">
+          <span>Fecha</span>
+          <span class="valor">{{ ahora | date:'short' }}</span>
+        </div>
+        <div class="tabla-wrapper">
+          <table class="tabla-resumen">
+            <thead>
+              <tr>
+                <th>Producto</th>
+                <th>Cant.</th>
+                <th>PU</th>
+                <th>Subtotal</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let vp of (totalManual>0 ? carritoResumen : carrito)">
+                <td>{{ vp.nombre }}</td>
+                <td>{{ vp.cantidad }}</td>
+                <td>${{ vp.precioUnitario | number:'1.0-0' }}</td>
+                <td>${{ vp.subtotal | number:'1.0-0' }}</td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr *ngIf="descuentoPct">
+                <td colspan="3" class="right">Descuento ({{ descuentoPct }}%)</td>
+                <td class="negativo">- ${{ descuentoMonto | number:'1.0-0' }}</td>
+              </tr>
+              <tr *ngIf="redondeoCarrito > 0 && totalManual === 0">
+                <td colspan="3" class="right">Redondeo</td>
+                <td>${{ redondeoCarrito | number:'1.0-0' }}</td>
+              </tr>
+              <tr>
+                <td colspan="3" class="right total-label">Total</td>
+                <td class="total-valor">${{ totalConRedondeo | number:'1.0-0' }}</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
 
-          <div class="pagos-resumen">
-            <div class="titulo">Pagos</div>
-            <div class="lista">
-              <div class="item" *ngFor="let p of pagos">
-                <span class="metodo">{{ p.metodo }}</span>
-                <span class="monto">${{ p.monto | number:'1.0-0' }}</span>
-                <span class="ref" *ngIf="p.referencia">Ref.: {{ p.referencia }}</span>
-              </div>
-            </div>
-            <div class="total-pagos" [class.ok]="estaBalanceado">
-              Pagado: ${{ totalPagos | number:'1.0-0' }} · Restante: ${{ restante | number:'1.0-0' }} <span class="vuelto" *ngIf="vuelto > 0">· Vuelto: ${{ vuelto | number:'1.0-0' }}</span>
+        <div class="pagos-resumen">
+          <div class="titulo">Pagos</div>
+          <div class="lista">
+            <div class="item" *ngFor="let p of pagos">
+              <span class="metodo">{{ p.metodo }}</span>
+              <span class="monto">${{ p.monto | number:'1.0-0' }}</span>
+              <span class="ref" *ngIf="p.referencia">Ref.: {{ p.referencia }}</span>
             </div>
           </div>
+          <div class="total-pagos" [class.ok]="estaBalanceado">
+            Pagado: ${{ totalPagos | number:'1.0-0' }} · Restante: ${{ restante | number:'1.0-0' }} <span class="vuelto" *ngIf="vuelto > 0">· Vuelto: ${{ vuelto | number:'1.0-0' }}</span>
+          </div>
+        </div>
 
-          <div class="cliente-vendedor">
-            <div class="campo">
-              <label>Cliente</label>
-              <input type="text" [(ngModel)]="cliente" placeholder="Opcional"/>
-            </div>
-            <div class="campo">
-              <label>Vendedor</label>
-              <select [(ngModel)]="vendedor">
-                <option *ngFor="let v of vendedores" [ngValue]="v">{{ v }}</option>
-              </select>
-            </div>
+        <div class="cliente-vendedor">
+          <div class="campo">
+            <label>Cliente</label>
+            <input type="text" [(ngModel)]="cliente" placeholder="Opcional"/>
+          </div>
+          <div class="campo">
+            <label>Vendedor</label>
+            <select [(ngModel)]="vendedor">
+              <option *ngFor="let v of vendedores" [ngValue]="v">{{ v }}</option>
+            </select>
           </div>
         </div>
       </div>
-      <div class="modal-actions">
-        <button class="btn-light" (click)="cerrarResumenVenta()">Volver</button>
-        <button class="primario" [disabled]="!estaBalanceado || !carrito.length" (click)="guardarVenta()">Confirmar</button>
-      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-light" (click)="cerrarResumenVenta()">Volver</button>
+      <button class="primario" [disabled]="!estaBalanceado || !carrito.length" (click)="guardarVenta()">Confirmar</button>
     </div>
   </div>
 </div>

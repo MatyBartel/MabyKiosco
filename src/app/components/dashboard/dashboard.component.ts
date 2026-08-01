@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { DatabaseService, Producto, Venta } from '../../services/database.service';
@@ -13,7 +13,9 @@ import { LOGOS } from '../../config/logos.config';
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
 })
-export class DashboardComponent implements OnInit, OnDestroy {
+export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
+  @ViewChildren('statMonto') statMontos!: QueryList<ElementRef<HTMLElement>>;
+
   brand = BRAND;
   logos = LOGOS;
   totalProductos = 0;
@@ -29,6 +31,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   private ventasSnapshot: Venta[] = [];
 
   private subscription = new Subscription();
+  private resizeListener = () => this.ajustarMontos();
 
   constructor(private databaseService: DatabaseService) {}
 
@@ -36,17 +39,41 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.cargarDatos();
   }
 
+  ngAfterViewInit(): void {
+    this.statMontos.changes.subscribe(() => this.ajustarMontos());
+    this.ajustarMontos();
+    window.addEventListener('resize', this.resizeListener);
+  }
+
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
+    window.removeEventListener('resize', this.resizeListener);
+  }
+
+  private ajustarMontos(): void {
+    setTimeout(() => {
+      requestAnimationFrame(() => {
+        for (const ref of this.statMontos) {
+          const el = ref.nativeElement;
+          el.style.fontSize = '';
+          let size = parseFloat(getComputedStyle(el).fontSize);
+          const min = 11;
+          while (el.scrollWidth > el.clientWidth && size > min) {
+            size -= 0.5;
+            el.style.fontSize = `${size}px`;
+          }
+        }
+      });
+    });
   }
 
   private cargarDatos(): void {
     this.subscription.add(
       this.databaseService.productos$.subscribe(productos => {
         this.totalProductos = productos.length;
-        this.productosBajoStock = productos.filter(p => p.stock <= p.stockMinimo).length;
+        this.productosBajoStock = productos.filter(p => p.stockMinimo > 0 && p.stock <= p.stockMinimo).length;
         this.productosBajoStockList = productos
-          .filter(p => p.stock <= p.stockMinimo);
+          .filter(p => p.stockMinimo > 0 && p.stock <= p.stockMinimo);
       })
     );
 
@@ -118,6 +145,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       .slice()
       .sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime())
       .slice(0, 5);
+    this.ajustarMontos();
   }
 
   nuevoProducto(): void {

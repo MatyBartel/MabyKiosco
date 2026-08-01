@@ -34,7 +34,7 @@ export class StockComponent implements OnInit, OnDestroy {
   showMassPrice = false;
   seleccionados = new Set<number>();
   categoriaAumento = '';
-  cantidadStock = 0;
+  ajusteGananciaPct = 0;
   page = 1;
   pageSize = 10;
 
@@ -89,7 +89,7 @@ export class StockComponent implements OnInit, OnDestroy {
     }
   }
 
-  get productosVista(): Producto[] {
+  get productosFiltrados(): Producto[] {
     const term = (this.filtroGeneral || '').toLowerCase();
     let arr = this.productos.filter(p =>
       p.codigo.toLowerCase().includes(term) ||
@@ -103,7 +103,7 @@ export class StockComponent implements OnInit, OnDestroy {
       arr = arr.filter(p => p.categoria === this.categoriaFiltro);
     }
 
-    arr = arr.sort((a, b) => {
+    return arr.sort((a, b) => {
       const campo = this.ordenCampo;
       let va: any = (a as any)[campo];
       let vb: any = (b as any)[campo];
@@ -112,7 +112,10 @@ export class StockComponent implements OnInit, OnDestroy {
       const comp = va < vb ? -1 : va > vb ? 1 : 0;
       return this.ordenAsc ? comp : -comp;
     });
+  }
 
+  get productosVista(): Producto[] {
+    const arr = this.productosFiltrados;
     const total = arr.length;
     const maxPage = Math.max(1, Math.ceil(total / this.pageSize));
     if (this.page > maxPage) this.page = maxPage;
@@ -121,16 +124,7 @@ export class StockComponent implements OnInit, OnDestroy {
   }
 
   get totalFiltrados(): number {
-    const term = (this.filtroGeneral || '').toLowerCase();
-    let arr = this.productos.filter(p =>
-      p.codigo.toLowerCase().includes(term) ||
-      p.nombre.toLowerCase().includes(term) ||
-      p.categoria.toLowerCase().includes(term) ||
-      (p.proveedor || '').toLowerCase().includes(term) ||
-      (p.codigoBarras || '').toLowerCase().includes(term)
-    );
-    if (this.categoriaFiltro) arr = arr.filter(p => p.categoria === this.categoriaFiltro);
-    return arr.length;
+    return this.productosFiltrados.length;
   }
 
   setPageSize(size: number): void {
@@ -191,18 +185,16 @@ export class StockComponent implements OnInit, OnDestroy {
 
   etiquetaTipoVenta(tipo: TipoVenta): string {
     if (tipo === 'kg') return 'Por kilo';
-    if (tipo === 'litro') return 'Por litro';
     return 'Por unidad';
   }
 
   etiquetaStock(p: Producto): string {
     if (p.tipoVenta === 'kg') return `${p.stock} kg`;
-    if (p.tipoVenta === 'litro') return `${p.stock} L`;
     return String(p.stock);
   }
 
   esFraccionable(p: Producto): boolean {
-    return p.tipoVenta === 'kg' || p.tipoVenta === 'litro';
+    return p.tipoVenta === 'kg';
   }
 
   verInfo(p: Producto): void {
@@ -232,9 +224,9 @@ export class StockComponent implements OnInit, OnDestroy {
     const porSeleccion = this.seleccionados.size > 0;
     const porCategoria = !!this.categoriaAumento;
 
-    const cant = Number(this.cantidadStock);
-    if (!isFinite(cant) || cant === 0) {
-      this.toast.show('Ingresá una cantidad de stock válida (distinta de 0).', 'error');
+    const delta = Number(this.ajusteGananciaPct);
+    if (!isFinite(delta) || delta === 0) {
+      this.toast.show('Ingresá un ajuste de ganancia válido (distinto de 0).', 'error');
       return;
     }
 
@@ -242,15 +234,24 @@ export class StockComponent implements OnInit, OnDestroy {
     this.startLoading('Aplicando cambios');
     await new Promise(r => setTimeout(r));
 
-    for (const p of this.productos) {
+    const candidatos = porSeleccion || porCategoria
+      ? this.productos
+      : this.productosFiltrados;
+
+    for (const p of candidatos) {
       const matchSel = porSeleccion && p.id ? this.seleccionados.has(p.id) : false;
       const matchCat = porCategoria ? p.categoria === this.categoriaAumento : false;
       const aplicar = (porSeleccion && matchSel) || (porCategoria && matchCat) || (!porSeleccion && !porCategoria);
-      if (aplicar) {
-        const delta = this.esFraccionable(p) ? cant : Math.trunc(cant);
-        const nuevoStock = Math.max(0, Number(((p.stock || 0) + delta).toFixed(3)));
-        afectadas.push({ ...p, stock: nuevoStock });
-      }
+      if (!aplicar) continue;
+
+      const pctActual = Number(p.porcentajeGanancia) || 0;
+      const nuevoPct = Math.max(0, Number((pctActual + delta).toFixed(2)));
+      const nuevoPrecio = this.db.calcularPrecioVenta(p.precioCosto, nuevoPct);
+      afectadas.push({
+        ...p,
+        porcentajeGanancia: nuevoPct,
+        precio: nuevoPrecio,
+      });
     }
 
     if (!afectadas.length) {
@@ -260,8 +261,9 @@ export class StockComponent implements OnInit, OnDestroy {
     }
 
     const count = this.db.actualizarProductosEnBloquePorId(afectadas);
-    const scopeTxt = porSeleccion ? 'seleccionados' : (porCategoria ? `categoría "${this.categoriaAumento}"` : 'todos los productos filtrados');
-    this.toast.show(`Stock actualizado (±${cant} en ${count} productos, ${scopeTxt}).`);
+    const scopeTxt = porSeleccion ? 'seleccionados' : (porCategoria ? `categoría "${this.categoriaAumento}"` : 'productos filtrados');
+    const signo = delta > 0 ? '+' : '';
+    this.toast.show(`% ganancia ajustado (${signo}${delta} pts en ${count} productos, ${scopeTxt}).`);
     this.showMassPrice = false;
     this.limpiarSeleccion();
     this.finishLoadingSuccess({ modificados: count });

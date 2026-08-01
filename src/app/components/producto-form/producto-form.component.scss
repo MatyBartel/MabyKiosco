@@ -22,14 +22,22 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: min(560px, calc(100vw - 24px));
-  max-height: calc(100vh - 32px);
+  width: min(540px, calc(100vw - 24px));
+  max-height: calc(100vh - 24px);
   background: #fff;
-  border-radius: 14px;
+  border-radius: 12px;
   box-shadow: 0 24px 64px rgba(0, 0, 0, 0.28);
   z-index: 1601;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+}
+
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
   overflow: hidden;
 }
 
@@ -38,44 +46,45 @@
   align-items: center;
   justify-content: center;
   position: relative;
-  padding: 16px 48px;
+  padding: 10px 40px;
   border-bottom: 1px solid #ecf0f1;
   flex-shrink: 0;
 }
 
 .modal-header h2 {
   margin: 0;
-  font-size: 1.25rem;
+  font-size: 1.1rem;
   color: var(--brand-primary-dark);
   text-align: center;
 }
 
 .btn-close {
   position: absolute;
-  right: 16px;
+  right: 12px;
   top: 50%;
   transform: translateY(-50%);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 34px;
-  height: 34px;
+  width: 30px;
+  height: 30px;
   border: 1px solid #dfe6e9;
-  border-radius: 8px;
+  border-radius: 6px;
   background: #fff;
   cursor: pointer;
 }
 
 .modal-body {
-  padding: 20px 24px 0;
+  padding: 10px 16px 8px;
   overflow-y: auto;
   flex: 1;
+  min-height: 0;
 }
 
 .form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px 20px;
+  gap: 8px 12px;
   max-width: 480px;
   margin: 0 auto;
   width: 100%;
@@ -85,28 +94,40 @@
   grid-column: 1 / -1;
 }
 
+.span-2 {
+  grid-column: 1 / -1;
+}
+
 .form-block {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding: 14px 16px;
+  gap: 6px;
+  padding: 8px 10px;
   background: #f8fafb;
   border: 1px solid #ecf0f1;
-  border-radius: 10px;
+  border-radius: 8px;
 }
 
 .block-label {
-  font-size: 0.78rem;
+  font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--brand-primary-dark);
   opacity: 0.85;
+  line-height: 1;
+}
+
+.block-label-sub {
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0;
+  opacity: 0.7;
 }
 
 .block-grid {
   display: grid;
-  gap: 12px 14px;
+  gap: 8px 10px;
 }
 
 .block-grid.cols-2 {
@@ -125,19 +146,20 @@
 
 label {
   font-weight: 600;
-  margin-bottom: 6px;
-  font-size: 0.88rem;
+  margin-bottom: 3px;
+  font-size: 0.8rem;
   color: var(--brand-text);
+  line-height: 1.2;
 }
 
 input, select, textarea {
   width: 100%;
-  padding: 9px 11px;
+  padding: 6px 9px;
   border: 1px solid #dfe6e9;
-  border-radius: 8px;
+  border-radius: 6px;
   outline: none;
   background: #fff;
-  font-size: 0.95rem;
+  font-size: 0.88rem;
   transition: border-color 0.15s ease;
 }
 
@@ -156,12 +178,13 @@ input[readonly] {
 
 textarea {
   resize: vertical;
-  min-height: 72px;
+  min-height: 44px;
+  max-height: 72px;
 }
 
 .categoria-row {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   align-items: stretch;
 }
 
@@ -174,51 +197,50 @@ textarea {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  min-width: 40px;
-  height: 38px;
+  width: 34px;
+  min-width: 34px;
+  height: 32px;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
   background: var(--brand-primary-dark);
   cursor: pointer;
   flex-shrink: 0;
 }
 
 .btn-scan img {
-  width: 22px;
-  height: 22px;
+  width: 18px;
+  height: 18px;
   object-fit: contain;
   filter: brightness(0) invert(1);
 }
 
 .hint {
-  margin-top: 4px;
+  margin-top: 2px;
   color: #7f8c8d;
-  font-size: 0.75rem;
-  line-height: 1.2;
+  font-size: 0.72rem;
+  line-height: 1.15;
 }
 
 .modal-footer {
   display: flex;
   justify-content: center;
-  gap: 12px;
-  padding: 16px 24px 20px;
+  gap: 10px;
+  padding: 10px 16px 12px;
   border-top: 1px solid #ecf0f1;
-  margin-top: 16px;
   flex-shrink: 0;
 }
 
 .btn-primary, .btn-secondary, .btn-light {
-  min-width: 120px;
-  padding: 10px 18px;
-  border-radius: 8px;
+  min-width: 110px;
+  padding: 8px 16px;
+  border-radius: 6px;
   border: none;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
-  font-size: 0.95rem;
+  font-size: 0.88rem;
   font-weight: 600;
 }
 
@@ -418,7 +440,8 @@ textarea {
     max-width: 100%;
   }
 
-  .span-full {
+  .span-full,
+  .span-2 {
     grid-column: 1;
   }
 

@@ -36,7 +36,7 @@
 
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
   gap: 24px;
   margin-bottom: 34px;
 }
@@ -46,12 +46,14 @@
   backdrop-filter: blur(8px);
   border: 1px solid var(--surface-border);
   border-radius: 14px;
-  padding: 26px;
+  padding: 20px;
   box-shadow: var(--surface-shadow);
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 12px;
   transition: transform 0.2s;
+  min-width: 0;
+  container-type: inline-size;
 }
 
 .stat-card:hover {
@@ -78,23 +80,51 @@
   filter: drop-shadow(0 6px 14px rgba(0,0,0,0.15));
 }
 
-.stat-content { flex: 1; min-width: 0; }
+.stat-content {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
 
 .stat-content h3 {
   margin: 0;
-  font-size: 50px;
+  font-size: clamp(1.75rem, 11cqi, 3.1rem);
   color: var(--brand-primary-dark);
   font-weight: bold;
+  line-height: 1.1;
 }
 
-.ventas-hoy .stat-content h3 {
-  font-size: clamp(1.1rem, 1.8vw, 2.2rem);
+.stat-monto .stat-icon {
+  width: 72px;
+  height: 72px;
+  flex-shrink: 0;
+}
+
+.stat-monto .stat-icon img {
+  width: 60px;
+  height: 60px;
+}
+
+.stat-monto .stat-content h3,
+.stat-monto .stat-value {
+  display: block;
+  width: 100%;
+  font-size: clamp(0.72rem, 6.2cqi, 1.65rem);
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.15;
+  max-width: 100%;
+  white-space: nowrap;
 }
 
 .stat-content p {
   margin: 5px 0 0 0;
   color: #7f8c8d;
   font-size: 0.9rem;
+  line-height: 1.25;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .dashboard-sections {

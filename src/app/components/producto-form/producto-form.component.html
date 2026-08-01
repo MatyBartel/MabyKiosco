@@ -8,7 +8,8 @@
     </button>
   </div>
 
-  <form class="modal-body" (ngSubmit)="guardar()" #form="ngForm">
+  <form class="modal-form" (ngSubmit)="guardar()" #form="ngForm">
+    <div class="modal-body">
     <div class="form-grid">
       <div class="form-group">
         <label for="categoria">Categoría*</label>
@@ -18,7 +19,7 @@
             <option *ngFor="let c of categoriasParaSelect" [value]="c">{{ c }}</option>
           </select>
           <button type="button" class="btn-icon" title="Gestionar categorías" (click)="abrirModalCategorias()">
-            <app-icon name="plus" [size]="18" color="#fff"></app-icon>
+            <app-icon name="plus" [size]="16" color="#fff"></app-icon>
           </button>
         </div>
       </div>
@@ -40,7 +41,7 @@
         </div>
       </div>
 
-      <div class="form-group span-full">
+      <div class="form-group span-2">
         <label for="nombre">Nombre*</label>
         <input id="nombre" name="nombre" [(ngModel)]="nombre" required />
       </div>
@@ -52,7 +53,20 @@
         </select>
       </div>
 
-      <div class="form-group" *ngIf="productoId">
+      <div class="form-group">
+        <label for="proveedor">Proveedor</label>
+        <div class="categoria-row">
+          <select id="proveedor" name="proveedor" [(ngModel)]="proveedor">
+            <option value="">Sin proveedor</option>
+            <option *ngFor="let p of proveedoresParaSelect" [value]="p">{{ p }}</option>
+          </select>
+          <button type="button" class="btn-icon" title="Gestionar proveedores" (click)="abrirModalProveedores()">
+            <app-icon name="plus" [size]="16" color="#fff"></app-icon>
+          </button>
+        </div>
+      </div>
+
+      <div class="form-group span-2" *ngIf="productoId">
         <label for="codigo">Código interno</label>
         <input id="codigo" name="codigo" [(ngModel)]="codigo" readonly />
       </div>
@@ -69,45 +83,31 @@
             <input id="porcentajeGanancia" name="porcentajeGanancia" type="number" step="0.01" [(ngModel)]="porcentajeGanancia" (ngModelChange)="onPorcentajeChange()" required />
           </div>
           <div class="form-group">
-            <label for="precio">{{ etiquetaPrecio }}</label>
+            <label for="precio" title="Calculado desde costo + %">Precio venta*</label>
             <input id="precio" name="precio" type="number" step="0.01" min="0.01" [(ngModel)]="precio" (ngModelChange)="onPrecioChange()" required />
-            <small class="hint">Desde costo + %</small>
           </div>
         </div>
       </div>
 
       <div class="form-block span-full">
-        <span class="block-label">Stock</span>
+        <span class="block-label">Stock <span class="block-label-sub">(opcional)</span></span>
         <div class="block-grid cols-2">
           <div class="form-group">
-            <label for="stock">{{ etiquetaStock }}</label>
-            <input id="stock" name="stock" type="number" [step]="stockStep" min="0" [(ngModel)]="stock" />
+            <label for="stock" title="Dejá vacío o 0 para promos/combos sin inventario">{{ etiquetaStock }}</label>
+            <input id="stock" name="stock" type="number" [step]="stockStep" min="0" [(ngModel)]="stock" placeholder="0" />
           </div>
           <div class="form-group">
             <label for="stockMinimo">Mínimo</label>
-            <input id="stockMinimo" name="stockMinimo" type="number" [step]="stockStep" min="0" [(ngModel)]="stockMinimo" />
+            <input id="stockMinimo" name="stockMinimo" type="number" [step]="stockStep" min="0" [(ngModel)]="stockMinimo" placeholder="0" />
           </div>
         </div>
-      </div>
-
-      <div class="form-group span-full">
-        <label for="proveedor">Proveedor</label>
-        <div class="categoria-row">
-          <select id="proveedor" name="proveedor" [(ngModel)]="proveedor">
-            <option value="">Sin proveedor</option>
-            <option *ngFor="let p of proveedoresParaSelect" [value]="p">{{ p }}</option>
-          </select>
-          <button type="button" class="btn-icon" title="Gestionar proveedores" (click)="abrirModalProveedores()">
-            <app-icon name="plus" [size]="18" color="#fff"></app-icon>
-          </button>
-        </div>
-        <small class="hint" *ngIf="!proveedoresLista.length">Usá el botón + para crear proveedores.</small>
       </div>
 
       <div class="form-group span-full">
         <label for="descripcion">Descripción</label>
-        <textarea id="descripcion" name="descripcion" rows="3" [(ngModel)]="descripcion"></textarea>
+        <textarea id="descripcion" name="descripcion" rows="2" [(ngModel)]="descripcion"></textarea>
       </div>
+    </div>
     </div>
 
     <div class="modal-footer">
